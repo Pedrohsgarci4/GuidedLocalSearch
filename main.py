@@ -147,7 +147,10 @@ def guided_local_search(graph, target_nodes, max_iterations=500, penalty_factor=
     i = 0
     for _ in range(max_iterations):
         new_route, new_cost = local_search(graph, best_route, target_nodes, penalty_factor, current_solution)
-        print(new_route)
+        print(f'{new_route} -> {calculate_route_distance(new_route, graph)}')
+        if calculate_route_distance(new_route, graph) < calculate_route_distance(current_solution, graph) and [node for node in target_nodes if node not in new_route] == []:
+            current_solution = new_route.copy()
+
         if new_cost < best_cost:
             best_route = new_route
             best_cost = new_cost
@@ -158,7 +161,7 @@ def guided_local_search(graph, target_nodes, max_iterations=500, penalty_factor=
             best_route = initialize_solution([], graph, target_nodes)
             best_cost = calculate_route_cost(best_route, graph, penalty_factor)
 
-    return best_route, calculate_route_distance(best_route, graph)
+    return current_solution, calculate_route_distance(current_solution, graph)
 
 # Geração do grafo aleatório
 num_nos = 30
@@ -189,7 +192,7 @@ target_nodes = target_nodes[:5]
 
 print('Alvos: ', target_nodes)
 
-best_route, best_cost = guided_local_search(g, target_nodes, max_iterations=200, penalty_factor=3)
+best_route, best_cost = guided_local_search(g, target_nodes, max_iterations=200, penalty_factor=10)
 
 print("Melhor rota encontrada:", best_route)
 print("Custo da melhor rota:", best_cost)
